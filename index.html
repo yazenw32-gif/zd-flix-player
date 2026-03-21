@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zD Flix - مشاهدة ممتعة</title>
+    <style>
+        body { background: #000; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        .video-container { width: 100%; max-width: 800px; border-bottom: 4px solid #CCFF00; box-shadow: 0 0 30px rgba(204, 255, 0, 0.3); }
+        video { width: 100%; display: block; outline: none; }
+        .branding { color: #CCFF00; font-family: sans-serif; font-weight: bold; margin-top: 15px; letter-spacing: 2px; text-shadow: 0 0 10px #CCFF00; }
+    </style>
+</head>
+<body>
+
+    <div class="video-container">
+        <video id="mainPlayer" controls poster="https://cinemana.shabakaty.cc/assets/images/placeholder.png">
+            <source src="" type="video/mp4">
+        </video>
+    </div>
+
+    <div class="branding">zD FLIX VIP ⚡</div>
+
+    <script>
+        async function autoStart() {
+            // سنستخدم بروكسي مختلف وأسرع هنا
+            const apiURL = "https://api.shabakaty.cc/v2/get_video_links";
+            const proxy = "https://api.allorigins.win/raw?url=";
+
+            try {
+                const response = await fetch(proxy + encodeURIComponent(apiURL), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ "video_id": "82725787", "userId": "0" })
+                });
+                const data = await response.json();
+                if(data && data[0].video_url) {
+                    document.getElementById('mainPlayer').src = data[0].video_url;
+                }
+            } catch (e) {
+                console.log("خطأ في جلب السيرفر");
+            }
+        }
+        autoStart();
+    </script>
+</body>
+</html>
+
