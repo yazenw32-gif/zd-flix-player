@@ -3,53 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>zD Flix VIP</title>
+    <title>zD FLIX VIP | هيبة المشاهدة</title>
     <style>
-        body { background: #000; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; color: #CCFF00; font-family: sans-serif; overflow: hidden; }
-        .player-container { width: 95%; max-width: 800px; border: 2px solid #CCFF00; border-radius: 20px; overflow: hidden; box-shadow: 0 0 30px #CCFF00; background: #000; position: relative; }
-        video { width: 100%; display: block; }
-        .logo { margin-top: 25px; font-size: 24px; font-weight: bold; text-shadow: 0 0 10px #CCFF00; letter-spacing: 2px; }
-        .status { margin-top: 10px; font-size: 14px; color: #fff; opacity: 0.7; }
+        body { 
+            background: #000; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            color: #CCFF00; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; 
+        }
+        .player-container { 
+            width: 95%; 
+            max-width: 800px; 
+            border: 3px solid #CCFF00; 
+            border-radius: 15px; 
+            overflow: hidden; 
+            box-shadow: 0 0 25px rgba(204, 255, 0, 0.4); 
+            background: #111;
+        }
+        video { width: 100%; display: block; outline: none; }
+        .logo { 
+            margin-top: 20px; 
+            font-size: 28px; 
+            font-weight: bold; 
+            text-shadow: 0 0 15px #CCFF00; 
+            letter-spacing: 3px; 
+        }
+        .status { 
+            margin-top: 15px; 
+            font-size: 14px; 
+            color: #fff; 
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
     </style>
 </head>
 <body>
 
     <div class="player-container">
-        <video id="zDPlayer" controls autoplay>
+        <video id="zDPlayer" controls autoplay poster="https://via.placeholder.com/800x450/000000/CCFF00?text=zD+FLIX+Loading...">
             </video>
     </div>
 
     <div class="logo">zD FLIX VIP ⚡</div>
-    <div id="status" class="status">جاري الاتصال عبر الجسر الخاص بك... 📡</div>
+    <div id="status" class="status">جاري تشغيل السيرفر الخاص بك... 📡</div>
 
     <script>
-        async function startApp() {
-            // رابط الجسر الخاص بك الذي أنشأته الآن
-            const myBridge = "https://calm-snowflake-8f2a.yazenw32.workers.dev";
+        async function loadVideo() {
+            // رابط الجسر (Worker) اللي سويته أنت بيدك
+            const workerUrl = "https://calm-snowflake-8f2a.yazenw32.workers.dev";
+            const statusBox = document.getElementById('status');
             
             try {
-                const response = await fetch(myBridge, {
+                // إرسال طلب لجلب فيلم (مثال لفيلم من سينمانا)
+                const response = await fetch(workerUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ "video_id": "82725787", "userId": "0" })
+                    body: JSON.stringify({ 
+                        "video_id": "82725787", // معرف الفيديو
+                        "userId": "0" 
+                    })
                 });
 
                 const data = await response.json();
                 
                 if(data && data[0] && data[0].video_url) {
-                    const videoElement = document.getElementById('zDPlayer');
-                    videoElement.src = data[0].video_url;
-                    document.getElementById('status').innerText = "تم الاتصال بنجاح. مشاهدة ممتعة! ✅";
+                    const video = document.getElementById('zDPlayer');
+                    video.src = data[0].video_url;
+                    statusBox.innerText = "متصل بنجاح.. مشاهدة ممتعة يا حسن! ✅";
+                    statusBox.style.color = "#CCFF00";
                 } else {
-                    document.getElementById('status').innerText = "السيرفر لم يرسل رابط الفيديو.. تأكد من صلاحية الفيلم";
+                    statusBox.innerText = "السيرفر شغال بس الفيلم غير متاح حالياً ⚠️";
                 }
             } catch (error) {
-                document.getElementById('status').innerText = "خطأ في الاتصال بالجسر.. تأكد من نشر الـ Worker";
+                statusBox.innerText = "خطأ: تأكد إن الـ Worker في وضع Active ❌";
                 console.error(error);
             }
         }
 
-        startApp();
+        // تشغيل التطبيق فوراً
+        loadVideo();
     </script>
 </body>
 </html>
