@@ -3,46 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>zD Flix - مشاهدة ممتعة</title>
+    <title>zD Flix VIP</title>
     <style>
-        body { background: #000; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        .video-container { width: 100%; max-width: 800px; border-bottom: 4px solid #CCFF00; box-shadow: 0 0 30px rgba(204, 255, 0, 0.3); }
-        video { width: 100%; display: block; outline: none; }
-        .branding { color: #CCFF00; font-family: sans-serif; font-weight: bold; margin-top: 15px; letter-spacing: 2px; text-shadow: 0 0 10px #CCFF00; }
+        body { background: #000; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; color: #CCFF00; font-family: sans-serif; }
+        .player-container { width: 95%; max-width: 800px; border: 2px solid #CCFF00; border-radius: 15px; overflow: hidden; box-shadow: 0 0 20px #CCFF00; background: #111; }
+        video { width: 100%; display: block; }
+        .loader { margin-top: 20px; font-weight: bold; text-shadow: 0 0 5px #CCFF00; }
     </style>
 </head>
 <body>
 
-    <div class="video-container">
-        <video id="mainPlayer" controls poster="https://cinemana.shabakaty.cc/assets/images/placeholder.png">
+    <div class="player-container">
+        <video id="mainPlayer" controls autoplay poster="https://cinemana.shabakaty.cc/assets/images/placeholder.png">
             <source src="" type="video/mp4">
         </video>
     </div>
 
-    <div class="branding">zD FLIX VIP ⚡</div>
+    <div id="status" class="loader">جاري صيد رابط الفيلم... 📡</div>
+    <div style="margin-top: 10px; font-size: 20px; font-weight: bold;">zD FLIX VIP ⚡</div>
 
     <script>
-        async function autoStart() {
-            // سنستخدم بروكسي مختلف وأسرع هنا
+        async function fetchVideo() {
             const apiURL = "https://api.shabakaty.cc/v2/get_video_links";
-            const proxy = "https://api.allorigins.win/raw?url=";
+            // استخدمنا بروكسي بديل هنا لضمان العمل
+            const proxy = "https://corsproxy.io/?" + encodeURIComponent(apiURL);
 
             try {
-                const response = await fetch(proxy + encodeURIComponent(apiURL), {
+                const response = await fetch(proxy, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ "video_id": "82725787", "userId": "0" })
                 });
                 const data = await response.json();
-                if(data && data[0].video_url) {
-                    document.getElementById('mainPlayer').src = data[0].video_url;
+                
+                if(data && data[0] && data[0].video_url) {
+                    const videoElement = document.getElementById('mainPlayer');
+                    videoElement.src = data[0].video_url;
+                    videoElement.play();
+                    document.getElementById('status').innerText = "تم الصيد بنجاح! مشاهدة ممتعة ✅";
+                } else {
+                    document.getElementById('status').innerText = "فشل الصيد.. السيرفر لا يستجيب حالياً";
                 }
-            } catch (e) {
-                console.log("خطأ في جلب السيرفر");
+            } catch (error) {
+                document.getElementById('status').innerText = "خطأ في الاتصال.. جاري المحاولة مرة أخرى";
+                console.error(error);
             }
         }
-        autoStart();
+        fetchVideo();
     </script>
 </body>
 </html>
-
