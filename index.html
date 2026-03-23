@@ -15,7 +15,6 @@
             --toast-bg: #8A2BE2; 
             --font-main: 'Almarai', sans-serif;
         }
-        /* خاصية عدم النسخ ومنع تحديد النصوص */
         * { 
             box-sizing: border-box; 
             font-family: 'Cairo', sans-serif; 
@@ -26,20 +25,31 @@
         }
         body { margin: 0; padding: 0; background-color: var(--bg); color: white; overflow-x: hidden; }
 
-        /* --- نافذة الترحيب المنبثقة --- */
-        #welcomePopup {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 10000;
+        /* --- رسالة الترحيب العلوية الجديدة --- */
+        #topWelcome {
+            position: fixed;
+            top: -100px; /* مخفية في البداية */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 400px;
+            background: linear-gradient(90deg, var(--purple), #5d1aa1);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 15px;
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transition: 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
-        .popup-box {
-            background: var(--card); border: 2px solid var(--purple);
-            padding: 30px; border-radius: 20px; text-align: center;
-            box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
-            width: 80%; max-width: 300px;
-        }
+        #topWelcome.show { top: 20px; }
+        .welcome-icon { font-size: 24px; }
+        .welcome-text h4 { margin: 0; font-size: 14px; font-weight: 800; }
+        .welcome-text p { margin: 0; font-size: 11px; opacity: 0.9; }
 
-        /* --- الستارة البنفسجية --- */
+        /* باقي الستايلات الأصلية */
         #page-loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--purple); z-index: 9999;
@@ -49,25 +59,7 @@
         #page-loader.active { transform: translateX(0); }
         #page-loader.exit { transform: translateX(100%); }
 
-        /* --- مشغل الفيديو --- */
-        #videoOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 5000; display: none;
-        }
-        #videoFrame { width: 100%; height: 100%; border: none; }
-        .close-player {
-            position: absolute; top: 20px; left: 20px; width: 40px; height: 40px;
-            background: rgba(255,255,255,0.2); color: white; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; z-index: 5001;
-        }
-
-        /* --- كارت تنبيه MX Player --- */
-        #mxAlertCard {
-            position: fixed; bottom: -100%; left: 0; width: 100%; 
-            background: #121212; z-index: 6000; padding: 30px 20px; 
-            border-radius: 25px 25px 0 0; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            border-top: 2px solid var(--purple); text-align: center;
-        }
+        #mxAlertCard { position: fixed; bottom: -100%; left: 0; width: 100%; background: #121212; z-index: 6000; padding: 30px 20px; border-radius: 25px 25px 0 0; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-top: 2px solid var(--purple); text-align: center; }
         #mxAlertCard.active { bottom: 0; }
         .mx-icon { width: 70px; height: 70px; background: #222; border-radius: 18px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; border: 1px solid #333; }
         .mx-icon i { font-size: 35px; color: var(--purple); }
@@ -76,7 +68,6 @@
         .btn-confirm { background: var(--purple); color: white; }
         .btn-cancel { background: #222; color: white; }
 
-        /* --- التوست وقائمة التقييم --- */
         #ratingSheet { position: fixed; bottom: -100%; left: 0; width: 100%; background: #1a1a1a; z-index: 2000; padding: 25px; border-radius: 25px 25px 0 0; transition: 0.4s; border-top: 1px solid #333; }
         #ratingSheet.active { bottom: 0; }
         .sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 1999; }
@@ -84,7 +75,6 @@
         #toast.show { top: 20px; }
         .rating-option { background: #262626; margin-bottom: 12px; padding: 18px; border-radius: 15px; display: flex; align-items: center; justify-content: space-between; }
 
-        /* --- السلايدر الرئيسي --- */
         .slider-container { position: relative; width: 100%; height: 500px; overflow: hidden; background: #000; touch-action: pan-y; }
         .main-slide { width: 100%; height: 100%; background-size: cover; background-position: center; position: relative; display: flex; align-items: flex-end; transition: background-image 0.4s ease-in-out; }
         .overlay { position: absolute; inset: 0; background: linear-gradient(to top, var(--bg) 15%, transparent 75%); }
@@ -96,7 +86,7 @@
         .watch-now-btn { background: var(--purple); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 700; flex: 1; font-size: 17px; display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; }
         .add-list-btn { background: rgba(255,255,255,0.15); color: white; border: none; width: 52px; height: 52px; border-radius: 12px; font-size: 22px; display: flex; justify-content: center; align-items: center; }
 
-        /* --- تصميم الأقسام --- */
+        /* كروت الأفلام والأقسام */
         .section-header { display: flex; justify-content: space-between; align-items: center; padding: 25px 15px 10px 15px; }
         .title-group { display: flex; align-items: center; gap: 10px; }
         .purple-bar { width: 4px; height: 24px; background-color: var(--purple); border-radius: 4px; }
@@ -116,7 +106,6 @@
         .card-overlay { position: absolute; bottom: 0; width: 100%; height: 50%; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; align-items: flex-end; padding: 8px; box-sizing: border-box; }
         .movie-title { font-size: 0.75rem; font-weight: 700; margin: 0; color: white; }
 
-        /* --- واجهة المعلومات --- */
         #detailsPage { display: none; position: absolute; top: 0; width: 100%; z-index: 1000; background: var(--bg); min-height: 100vh; }
         .details-hero { width: 100%; height: 380px; background-size: cover; background-position: center; position: relative; }
         .back-nav { position: absolute; top: 25px; right: 20px; z-index: 1100; width: 40px; height: 40px; background: rgba(138, 43, 226, 0.2); border: 1px solid var(--purple); color: var(--purple); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
@@ -126,29 +115,24 @@
         .int-btn i { font-size: 22px; color: var(--purple); }
         .int-btn.active-solid i { color: var(--purple); font-weight: 900; }
 
-        /* --- الحلقات --- */
         .ep-card { display: flex; flex-direction: row-reverse; background: var(--card); border-radius: 12px; margin-bottom: 15px; padding: 10px; gap: 12px; border: 1px solid #1f1f1f; align-items: center; cursor: pointer; }
         .ep-thumb { width: 100px; aspect-ratio: 16/9; border-radius: 8px; overflow: hidden; background: #222; position: relative; }
         .ep-thumb img { width: 100%; height: 100%; object-fit: cover; }
         .ep-meta { flex: 1; text-align: right; }
-        .play-ep-btn { 
-            background: var(--purple); color: white; border: none; 
-            width: 35px; height: 35px; border-radius: 8px; 
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; cursor: pointer;
-        }
+        .play-ep-btn { background: var(--purple); color: white; border: none; width: 35px; height: 35px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; }
     </style>
 </head>
-<body oncontextmenu="return false;"> <div id="welcomePopup">
-    <div class="popup-box">
-        <h2 style="margin: 0 0 10px 0;">أهلاً يمن وسام</h2>
-        <p style="color: #888; font-size: 14px; margin-bottom: 20px;">نتمنى لك مشاهدة ممتعة في عالم ZDflix</p>
-        <button class="watch-now-btn" onclick="document.getElementById('welcomePopup').style.display='none'">دخول</button>
+<body oncontextmenu="return false;">
+
+<div id="topWelcome">
+    <div class="welcome-icon">🎬</div>
+    <div class="welcome-text">
+        <h4>أهلاً بك، يمن وسام</h4>
+        <p>نتمنى لك مشاهدة ممتعة في ZDflix</p>
     </div>
 </div>
 
 <div id="page-loader"></div>
-
 <div id="mxAlertCard">
     <div class="mx-icon"><i class="fa-solid fa-play"></i></div>
     <h3 style="margin: 0 0 10px 0;">تشغيل بواسطة MX Player</h3>
@@ -249,7 +233,19 @@
 
     let items = [], currentIndex = 0, startX = 0, isNotified = false;
 
-    // --- وظائف التقييم والإشعار ---
+    // --- تشغيل رسالة الترحيب تلقائياً عند الفتح ---
+    window.onload = function() {
+        const welcome = document.getElementById('topWelcome');
+        setTimeout(() => {
+            welcome.classList.add('show');
+            // الإخفاء بعد 6 ثوانٍ
+            setTimeout(() => {
+                welcome.classList.remove('show');
+            }, 6000);
+        }, 500); // تظهر بعد نصف ثانية من التحميل
+        loadSlider();
+    };
+
     function openRating() { 
         document.getElementById('ratingSheet').classList.add('active'); 
         document.getElementById('sheetOverlay').style.display = 'block'; 
@@ -291,7 +287,6 @@
         document.getElementById('ratingSheet').classList.remove('active');
     }
 
-    // --- وظائف التحميل والتشغيل ---
     async function loadSlider() {
         for (let id of sliderIds) {
             const type = (id === 11224) ? 'movie' : 'tv';
@@ -341,23 +336,18 @@
     async function openDetails(item, type) {
         const loader = document.getElementById('page-loader');
         loader.classList.add('active');
-
         setTimeout(async () => {
             document.getElementById('homePage').style.display = 'none';
             document.getElementById('detailsPage').style.display = 'block';
             window.scrollTo(0,0);
-            
             document.getElementById('detHero').style.backgroundImage = `url('${IMG_URL}${item.backdrop_path}')`;
             document.getElementById('detTitle').innerText = item.name || item.title;
             document.getElementById('detStory').innerText = item.overview || 'لا يوجد وصف متاح.';
-            
             const year = new Date(item.first_air_date || item.release_date).getFullYear();
             const extra = item.number_of_seasons ? item.number_of_seasons + ' موسم' : 'فيلم';
             document.getElementById('detMeta').innerHTML = `<span class="imdb-home">IMDb ${item.vote_average.toFixed(1)}</span><span>${year}</span> | <span>${extra}</span>`;
-            
             const epContainer = document.getElementById('epList');
             epContainer.innerHTML = '';
-
             if (type === 'tv') {
                 document.getElementById('seasonTitle').style.display = 'block';
                 try {
@@ -379,7 +369,6 @@
                 document.getElementById('seasonTitle').style.display = 'none';
                 epContainer.innerHTML = `<button class="watch-now-btn">◀ تشغيل الآن</button>`;
             }
-
             loader.classList.replace('active', 'exit');
             setTimeout(() => loader.classList.remove('exit'), 600);
         }, 600);
@@ -424,7 +413,6 @@
         }, 600);
     }
 
-    loadSlider();
     fetchSection(idsAnime, 'containerAnime');
     fetchSection(idsRamadan, 'container1');
     fetchSection(idsShami, 'container2');
