@@ -3,78 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZDflix | Purple Cinema</title>
+    <title>ZDflix | Cinema Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
+        /* منع النسخ وتحديد النصوص والصور */
+        * {
+            -webkit-user-select: none;
+            user-select: none;
+            outline: none;
+        }
+
+        input, textarea {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        
+        img {
+            -webkit-user-drag: none;
+            pointer-events: none;
+        }
+
         :root { 
-            --purple: #8A2BE2; 
+            --amber: #FFBF00; 
             --bg: #050505; 
             --card: #121212; 
-            --toast-bg: #8A2BE2; 
+            --toast-bg: #FFBF00; 
             --font-main: 'Almarai', sans-serif;
         }
-        * { 
-            box-sizing: border-box; 
-            font-family: 'Cairo', sans-serif; 
-            -webkit-tap-highlight-color: transparent; 
-            user-select: none; 
-            -webkit-user-select: none; 
-            -ms-user-select: none; 
-        }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; padding: 0; background-color: var(--bg); color: white; overflow-x: hidden; }
 
-        /* --- رسالة الترحيب العلوية الجديدة --- */
-        #topWelcome {
-            position: fixed;
-            top: -100px; /* مخفية في البداية */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 400px;
-            background: linear-gradient(90deg, var(--purple), #5d1aa1);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 15px;
-            z-index: 10001;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            transition: 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        }
-        #topWelcome.show { top: 20px; }
-        .welcome-icon { font-size: 24px; }
-        .welcome-text h4 { margin: 0; font-size: 14px; font-weight: 800; }
-        .welcome-text p { margin: 0; font-size: 11px; opacity: 0.9; }
-
-        /* باقي الستايلات الأصلية */
+        /* --- الستارة --- */
         #page-loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--purple); z-index: 9999;
+            background-color: var(--amber); z-index: 9999;
             transform: translateX(-100%); transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
             pointer-events: none;
         }
         #page-loader.active { transform: translateX(0); }
         #page-loader.exit { transform: translateX(100%); }
 
-        #mxAlertCard { position: fixed; bottom: -100%; left: 0; width: 100%; background: #121212; z-index: 6000; padding: 30px 20px; border-radius: 25px 25px 0 0; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-top: 2px solid var(--purple); text-align: center; }
+        /* --- كارت تنبيه TDM Player --- */
+        #mxAlertCard {
+            position: fixed; bottom: -100%; left: 0; width: 100%; 
+            background: #121212; z-index: 6000; padding: 30px 20px; 
+            border-radius: 25px 25px 0 0; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border-top: 2px solid var(--amber); text-align: center;
+        }
         #mxAlertCard.active { bottom: 0; }
         .mx-icon { width: 70px; height: 70px; background: #222; border-radius: 18px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; border: 1px solid #333; }
-        .mx-icon i { font-size: 35px; color: var(--purple); }
+        .mx-icon i { font-size: 35px; color: var(--amber); }
         .mx-btn-group { display: flex; gap: 10px; margin-top: 20px; }
         .mx-btn { flex: 1; padding: 15px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; font-size: 15px; }
-        .btn-confirm { background: var(--purple); color: white; }
+        .btn-confirm { background: var(--amber); color: black; }
         .btn-cancel { background: #222; color: white; }
 
-        #ratingSheet { position: fixed; bottom: -100%; left: 0; width: 100%; background: #1a1a1a; z-index: 2000; padding: 25px; border-radius: 25px 25px 0 0; transition: 0.4s; border-top: 1px solid #333; }
-        #ratingSheet.active { bottom: 0; }
-        .sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 1999; }
-        #toast { position: fixed; top: -120px; left: 50%; transform: translateX(-50%); width: 90%; background: var(--toast-bg); color: white; padding: 15px; border-radius: 12px; font-weight: 700; z-index: 3000; transition: 0.6s; font-size: 14px; display: flex; align-items: center; justify-content: space-between; }
-        #toast.show { top: 20px; }
-        .rating-option { background: #262626; margin-bottom: 12px; padding: 18px; border-radius: 15px; display: flex; align-items: center; justify-content: space-between; }
-
+        /* --- السلايدر الرئيسي --- */
         .slider-container { position: relative; width: 100%; height: 500px; overflow: hidden; background: #000; touch-action: pan-y; }
         .main-slide { width: 100%; height: 100%; background-size: cover; background-position: center; position: relative; display: flex; align-items: flex-end; transition: background-image 0.4s ease-in-out; }
         .overlay { position: absolute; inset: 0; background: linear-gradient(to top, var(--bg) 15%, transparent 75%); }
@@ -83,13 +69,13 @@
         .meta-home { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 20px; font-weight: 600; opacity: 0.9; }
         .imdb-home { background: white; color: black; padding: 1px 6px; border-radius: 4px; font-weight: 800; }
         .action-row { display: flex; align-items: center; gap: 12px; }
-        .watch-now-btn { background: var(--purple); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 700; flex: 1; font-size: 17px; display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; }
+        .watch-now-btn { background: var(--amber); color: black; border: none; padding: 14px; border-radius: 12px; font-weight: 700; flex: 1; font-size: 17px; display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; }
         .add-list-btn { background: rgba(255,255,255,0.15); color: white; border: none; width: 52px; height: 52px; border-radius: 12px; font-size: 22px; display: flex; justify-content: center; align-items: center; }
 
-        /* كروت الأفلام والأقسام */
+        /* --- تصميم الأقسام --- */
         .section-header { display: flex; justify-content: space-between; align-items: center; padding: 25px 15px 10px 15px; }
         .title-group { display: flex; align-items: center; gap: 10px; }
-        .purple-bar { width: 4px; height: 24px; background-color: var(--purple); border-radius: 4px; }
+        .amber-bar { width: 4px; height: 24px; background-color: var(--amber); border-radius: 4px; }
         .section-title { font-size: 1.1rem; font-weight: 800; margin: 0; font-family: var(--font-main); }
         .view-all { color: #ffffff; text-decoration: none; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
 
@@ -99,44 +85,50 @@
 
         .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; padding: 0 15px 40px 15px; }
 
-        .movie-card { background-color: #151515; border-radius: 12px; overflow: hidden; position: relative; transition: 0.3s; border: 1.5px solid rgba(138, 43, 226, 0.1); }
-        .movie-card:active { transform: scale(0.92); border-color: var(--purple); box-shadow: 0 0 15px rgba(138, 43, 226, 0.3); }
+        .movie-card { background-color: #151515; border-radius: 12px; overflow: hidden; position: relative; transition: 0.3s; border: 1.5px solid rgba(255, 191, 0, 0.1); }
+        .movie-card:active { transform: scale(0.92); border-color: var(--amber); box-shadow: 0 0 15px rgba(255, 191, 0, 0.3); }
         .poster-wrapper { position: relative; aspect-ratio: 2 / 3; }
         .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; }
         .card-overlay { position: absolute; bottom: 0; width: 100%; height: 50%; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; align-items: flex-end; padding: 8px; box-sizing: border-box; }
         .movie-title { font-size: 0.75rem; font-weight: 700; margin: 0; color: white; }
 
+        /* --- واجهة المعلومات --- */
         #detailsPage { display: none; position: absolute; top: 0; width: 100%; z-index: 1000; background: var(--bg); min-height: 100vh; }
         .details-hero { width: 100%; height: 380px; background-size: cover; background-position: center; position: relative; }
-        .back-nav { position: absolute; top: 25px; right: 20px; z-index: 1100; width: 40px; height: 40px; background: rgba(138, 43, 226, 0.2); border: 1px solid var(--purple); color: var(--purple); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .back-nav { position: absolute; top: 25px; right: 20px; z-index: 1100; width: 40px; height: 40px; background: rgba(255, 191, 0, 0.2); border: 1px solid var(--amber); color: var(--amber); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
         .details-body { padding: 20px; margin-top: -40px; position: relative; z-index: 5; }
         .interaction-bar { display: flex; justify-content: space-around; margin: 20px 0; border-top: 1px solid #222; border-bottom: 1px solid #222; padding: 15px 0; }
         .int-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; color: white; font-size: 12px; cursor: pointer; }
-        .int-btn i { font-size: 22px; color: var(--purple); }
-        .int-btn.active-solid i { color: var(--purple); font-weight: 900; }
+        .int-btn i { font-size: 22px; color: var(--amber); }
 
+        /* --- الحلقات --- */
         .ep-card { display: flex; flex-direction: row-reverse; background: var(--card); border-radius: 12px; margin-bottom: 15px; padding: 10px; gap: 12px; border: 1px solid #1f1f1f; align-items: center; cursor: pointer; }
         .ep-thumb { width: 100px; aspect-ratio: 16/9; border-radius: 8px; overflow: hidden; background: #222; position: relative; }
         .ep-thumb img { width: 100%; height: 100%; object-fit: cover; }
         .ep-meta { flex: 1; text-align: right; }
-        .play-ep-btn { background: var(--purple); color: white; border: none; width: 35px; height: 35px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; }
+        .play-ep-btn { 
+            background: var(--amber); color: black; border: none; 
+            width: 35px; height: 35px; border-radius: 8px; 
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; cursor: pointer;
+        }
+
+        #ratingSheet { position: fixed; bottom: -100%; left: 0; width: 100%; background: #1a1a1a; z-index: 2000; padding: 25px; border-radius: 25px 25px 0 0; transition: 0.4s; border-top: 1px solid #333; }
+        #ratingSheet.active { bottom: 0; }
+        .sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 1999; }
+        #toast { position: fixed; top: -120px; left: 50%; transform: translateX(-50%); width: 90%; background: var(--toast-bg); color: black; padding: 15px; border-radius: 12px; font-weight: 700; z-index: 3000; transition: 0.6s; font-size: 14px; display: flex; align-items: center; justify-content: space-between; }
+        #toast.show { top: 20px; }
+        .rating-option { background: #262626; margin-bottom: 12px; padding: 18px; border-radius: 15px; display: flex; align-items: center; justify-content: space-between; }
     </style>
 </head>
-<body oncontextmenu="return false;">
-
-<div id="topWelcome">
-    <div class="welcome-icon">🎬</div>
-    <div class="welcome-text">
-        <h4>أهلاً بك، يمن وسام</h4>
-        <p>نتمنى لك مشاهدة ممتعة في ZDflix</p>
-    </div>
-</div>
+<body>
 
 <div id="page-loader"></div>
+
 <div id="mxAlertCard">
     <div class="mx-icon"><i class="fa-solid fa-play"></i></div>
-    <h3 style="margin: 0 0 10px 0;">تشغيل بواسطة MX Player</h3>
-    <p style="color: #888; font-size: 14px; margin: 0;">للحصول على أفضل تجربة مشاهدة مع الترجمة، يرجى تثبيت مشغل MX Player على جهازك.</p>
+    <h3 style="margin: 0 0 10px 0;">مشغل TDM Player</h3>
+    <p style="color: #888; font-size: 14px; margin: 0; padding: 0 10px;">يرجى تشغيل الحلقة عبر مشغل TDM للحصول على أفضل أداء.</p>
     <div class="mx-btn-group">
         <button class="mx-btn btn-confirm" id="confirmPlay">تشغيل الآن</button>
         <button class="mx-btn btn-cancel" onclick="closeMxAlert()">إلغاء</button>
@@ -165,7 +157,7 @@
                 <h1 class="slide-title" id="title"></h1>
                 <div class="meta-home">
                     <span class="imdb-home" id="rating"></span>
-                    <span id="year"></span> | <span id="type"></span> | <span style="color:var(--purple)">رائج الآن</span>
+                    <span id="year"></span> | <span id="type"></span> | <span style="color:var(--amber)">رائج الآن</span>
                 </div>
                 <div class="action-row">
                     <button class="watch-now-btn" onclick="openDetailsFromSlider()">◀ شاهد الآن</button>
@@ -175,26 +167,26 @@
         </div>
     </div>
 
-    <div id="wrapperAnime">
+    <div id="wrapperPlays">
         <div class="section-header">
-            <div class="title-group"><div class="purple-bar"></div><h2 class="section-title">رسوم متحركة 👾</h2></div>
-            <div class="view-all" onclick="toggleLayout('containerAnime', this, 'wrapper1')">عرض الكل</div>
+            <div class="title-group"><div class="amber-bar"></div><h2 class="section-title">مسرحيات العيد </h2></div>
+            <div class="view-all" onclick="toggleLayout('containerPlays', this, 'wrapper1')">عرض الكل</div>
         </div>
-        <div id="containerAnime" class="horizontal-layout"></div>
+        <div id="containerPlays" class="horizontal-layout"></div>
     </div>
 
     <div id="wrapper1">
         <div class="section-header">
-            <div class="title-group"><div class="purple-bar"></div><h2 class="section-title">ترند رمضان 2026 🌙</h2></div>
-            <div class="view-all" onclick="toggleLayout('container1', this, 'wrapper2')">عرض الكل</div>
+            <div class="title-group"><div class="amber-bar"></div><h2 class="section-title">ترند رمضان  </h2></div>
+            <div class="view-all" onclick="toggleLayout('container1', this, 'wrapperPlays')">عرض الكل</div>
         </div>
         <div id="container1" class="horizontal-layout"></div>
     </div>
 
     <div id="wrapper2">
         <div class="section-header">
-            <div class="title-group"><div class="purple-bar"></div><h2 class="section-title">بيئة شامية 🏚️</h2></div>
-            <div class="view-all" onclick="toggleLayout('container2', this, 'wrapperAnime')">عرض الكل</div>
+            <div class="title-group"><div class="amber-bar"></div><h2 class="section-title">بيئة شامية </h2></div>
+            <div class="view-all" onclick="toggleLayout('container2', this, 'wrapper1')">عرض الكل</div>
         </div>
         <div id="container2" class="horizontal-layout"></div>
     </div>
@@ -216,7 +208,7 @@
         </div>
 
         <div class="episodes-section">
-            <h3 id="seasonTitle" style="border-right: 4px solid var(--purple); padding-right: 10px; margin-bottom: 20px;">الموسم 1</h3>
+            <h3 id="seasonTitle" style="border-right: 4px solid var(--amber); padding-right: 10px; margin-bottom: 20px;">الموسم 1</h3>
             <div id="epList"></div>
         </div>
     </div>
@@ -226,60 +218,22 @@
     const API_KEY = '74f38453bc66751d8bad40ebfa1b4eca';
     const IMG_URL = 'https://image.tmdb.org/t/p/original';
     
-    const sliderIds = [387, 63401, 30983, 313314, 242414];
-    const idsAnime = [65733, 28151, 1095039, 95082, 63401, 95081, 387, 30983, 11224];
-    const idsRamadan = [313314, 304267, 303384, 242414, 304620, 301329];
-    const idsShami = [30695, 53923, 73519];
+    const sliderIds = [972242, 181923, 313314, 304267, 303384, 242414, 304620, 301329];
+    const idsRamadan = [314644, 313314, 304267, 303384, 242414, 304620, 301329, 305842]; // تم وضع مسلسل حمدية في البداية
+    const idsShami = [30695, 53923, 73519, 122870, 122865];
+    const idsPlays = [972242, 181923, 980710, 327312, 56334];
 
-    let items = [], currentIndex = 0, startX = 0, isNotified = false;
-
-    // --- تشغيل رسالة الترحيب تلقائياً عند الفتح ---
-    window.onload = function() {
-        const welcome = document.getElementById('topWelcome');
-        setTimeout(() => {
-            welcome.classList.add('show');
-            // الإخفاء بعد 6 ثوانٍ
-            setTimeout(() => {
-                welcome.classList.remove('show');
-            }, 6000);
-        }, 500); // تظهر بعد نصف ثانية من التحميل
-        loadSlider();
+    // قاعدة بيانات الروابط
+    const zdDatabase = {
+        "314644": { 
+            "1": "https://b2.shahidtv.net/files/IQ/Hamdiya/Hamdiya-S01-EP001-720p.mp4"
+        },
+        "892429": { "movie": "https://fhd200a14.dls4all.online/d/2uqhnufrfsrnuwfu756jbzpk7kvsltmyjwvalc7ecghcyxrq42t7nwfggj6vpjw4jrr22iye/video.mp4" },
+        "242414": { "1": "https://fhd200a14.dls4all.online/d/2uqhnufrfsrnuwfu756jbzpk7kvsltmyjwvalc7ecghcyxrq42t7nwfggj6vpjw4jrr22iye/video.mp4" }
     };
 
-    function openRating() { 
-        document.getElementById('ratingSheet').classList.add('active'); 
-        document.getElementById('sheetOverlay').style.display = 'block'; 
-    }
-
-    function submitRating(val, iconClass) {
-        document.getElementById('rateTxt').innerText = val; 
-        document.getElementById('rateTxt').style.color = 'var(--purple)';
-        document.getElementById('rateIcon').className = `fa-solid ${iconClass}`; 
-        closeMxAlert();
-        const toast = document.getElementById('toast'); 
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
-    }
-
-    function toggleNotification() {
-        isNotified = !isNotified;
-        const bellBtn = document.getElementById('bellBtn'), 
-              bellIcon = bellBtn.querySelector('i'), 
-              bellTxt = document.getElementById('bellTxt');
-        if (isNotified) { 
-            bellIcon.classList.replace('fa-regular', 'fa-solid'); 
-            bellBtn.classList.add('active-solid'); 
-            bellTxt.innerText = 'مفعل'; 
-            bellTxt.style.color = 'var(--purple)'; 
-        } else { 
-            bellIcon.classList.replace('fa-solid', 'fa-regular'); 
-            bellBtn.classList.remove('active-solid'); 
-            bellTxt.innerText = 'إشعار'; 
-            bellTxt.style.color = 'white'; 
-        }
-    }
-
-    function hideToast() { document.getElementById('toast').classList.remove('show'); }
+    let items = [], currentIndex = 0, startX = 0;
+    let isNotified = false;
 
     function closeMxAlert() {
         document.getElementById('mxAlertCard').classList.remove('active');
@@ -287,9 +241,29 @@
         document.getElementById('ratingSheet').classList.remove('active');
     }
 
+    function playInTDM(url, title) {
+        if (!url || url === "#") {
+            alert("عذراً، الرابط غير متوفر حالياً.");
+            return;
+        }
+        const alertCard = document.getElementById('mxAlertCard');
+        const overlay = document.getElementById('sheetOverlay');
+        const confirmBtn = document.getElementById('confirmPlay');
+        
+        alertCard.classList.add('active');
+        overlay.style.display = 'block';
+        
+        confirmBtn.onclick = () => {
+            const intentUrl = `intent:${url}#Intent;package=com.tdm.player;S.title=${encodeURIComponent(title)};i.ext_priority=true;end`;
+            window.location.assign(intentUrl);
+            setTimeout(() => { if (!document.hidden) window.location.href = "https://play.google.com/store/apps/details?id=com.tdm.player"; }, 2500);
+            closeMxAlert();
+        };
+    }
+
     async function loadSlider() {
         for (let id of sliderIds) {
-            const type = (id === 11224) ? 'movie' : 'tv';
+            const type = (id === 972242 || id === 181923) ? 'movie' : 'tv';
             try {
                 const r = await fetch(`https://api.themoviedb.org/3/${type}/${id}?api_key=${API_KEY}&language=ar`);
                 const d = await r.json();
@@ -309,7 +283,7 @@
             document.getElementById('title').innerText = item.name || item.title;
             document.getElementById('rating').innerText = `IMDb ${item.vote_average.toFixed(1)}`;
             document.getElementById('year').innerText = new Date(item.first_air_date || item.release_date).getFullYear();
-            document.getElementById('type').innerText = item.media_type === 'tv' ? 'مسلسل' : 'فيلم';
+            document.getElementById('type').innerText = item.media_type === 'tv' ? 'مسلسل' : 'مسرحية/فيلم';
             info.style.opacity = 1;
         }, 200);
     }
@@ -317,8 +291,9 @@
     async function fetchSection(ids, containerId) {
         const container = document.getElementById(containerId);
         for (let id of ids) {
-            let type = 'tv';
-            if (id === 11224 || id === 30695) type = 'movie'; 
+            let type = 'tv'; // الافتراضي مسلسلات رمضان
+            if (idsPlays.includes(id)) type = 'movie';
+            
             try {
                 const resp = await fetch(`https://api.themoviedb.org/3/${type}/${id}?api_key=${API_KEY}&language=ar`);
                 const data = await resp.json();
@@ -342,23 +317,27 @@
             window.scrollTo(0,0);
             document.getElementById('detHero').style.backgroundImage = `url('${IMG_URL}${item.backdrop_path}')`;
             document.getElementById('detTitle').innerText = item.name || item.title;
-            document.getElementById('detStory').innerText = item.overview || 'لا يوجد وصف متاح.';
+            document.getElementById('detStory').innerText = item.overview || 'لا يوجد وصف متاح حالياً.';
             const year = new Date(item.first_air_date || item.release_date).getFullYear();
-            const extra = item.number_of_seasons ? item.number_of_seasons + ' موسم' : 'فيلم';
-            document.getElementById('detMeta').innerHTML = `<span class="imdb-home">IMDb ${item.vote_average.toFixed(1)}</span><span>${year}</span> | <span>${extra}</span>`;
+            document.getElementById('detMeta').innerHTML = `<span class="imdb-home">IMDb ${item.vote_average.toFixed(1)}</span><span>${year}</span>`;
+            
             const epContainer = document.getElementById('epList');
             epContainer.innerHTML = '';
+            const currentID = item.id.toString();
+
             if (type === 'tv') {
                 document.getElementById('seasonTitle').style.display = 'block';
                 try {
                     const res = await fetch(`https://api.themoviedb.org/3/tv/${item.id}/season/1?api_key=${API_KEY}&language=ar`);
                     const sData = await res.json();
                     sData.episodes.forEach(ep => {
+                        const epNum = ep.episode_number.toString();
+                        const directUrl = (zdDatabase[currentID] && zdDatabase[currentID][epNum]) ? zdDatabase[currentID][epNum] : "#"; 
                         epContainer.innerHTML += `
-                        <div class="ep-card">
+                        <div class="ep-card" onclick="playInTDM('${directUrl}', '${item.name} - حلقة ${ep.episode_number}')">
                             <div class="play-ep-btn"><i class="fa-solid fa-play"></i></div>
                             <div class="ep-meta">
-                                <div style="color:var(--purple); font-weight:700;">الحلقة ${ep.episode_number}</div>
+                                <div style="color:var(--amber); font-weight:700;">الحلقة ${ep.episode_number}</div>
                                 <div style="font-size:13px; margin-top:2px; color:#fff;">${ep.name}</div>
                             </div>
                             <div class="ep-thumb"><img src="${IMG_URL}${ep.still_path || item.backdrop_path}"></div>
@@ -367,7 +346,8 @@
                 } catch(e) { epContainer.innerHTML = 'تعذر تحميل الحلقات.'; }
             } else {
                 document.getElementById('seasonTitle').style.display = 'none';
-                epContainer.innerHTML = `<button class="watch-now-btn">◀ تشغيل الآن</button>`;
+                const directUrl = (zdDatabase[currentID] && zdDatabase[currentID]["movie"]) ? zdDatabase[currentID]["movie"] : "#";
+                epContainer.innerHTML = `<button class="watch-now-btn" onclick="playInTDM('${directUrl}', '${item.title}')">◀ شاهد الآن</button>`;
             }
             loader.classList.replace('active', 'exit');
             setTimeout(() => loader.classList.remove('exit'), 600);
@@ -398,22 +378,41 @@
 
     function toggleLayout(containerId, btn, otherWrapperId) {
         const container = document.getElementById(containerId);
+        const otherWrapper = document.getElementById(otherWrapperId);
         const loader = document.getElementById('page-loader');
+        const slider = document.getElementById('slider');
         loader.classList.add('active');
         setTimeout(() => {
             if (container.classList.contains('horizontal-layout')) {
                 container.className = "grid-layout"; btn.innerText = "رجوع";
-                document.getElementById('slider').style.display = "none";
+                otherWrapper.style.display = "none"; slider.style.display = "none";
             } else {
                 container.className = "horizontal-layout"; btn.innerText = "عرض الكل";
-                document.getElementById('slider').style.display = "block";
+                otherWrapper.style.display = "block"; slider.style.display = "block";
             }
             window.scrollTo(0, 0); loader.classList.replace('active', 'exit');
             setTimeout(() => loader.classList.remove('exit'), 600);
         }, 600);
     }
 
-    fetchSection(idsAnime, 'containerAnime');
+    function toggleNotification() {
+        isNotified = !isNotified;
+        const bellBtn = document.getElementById('bellBtn'), bellIcon = bellBtn.querySelector('i'), bellTxt = document.getElementById('bellTxt');
+        if (isNotified) { bellIcon.classList.replace('fa-regular', 'fa-solid'); bellTxt.innerText = 'مفعل'; bellTxt.style.color = 'var(--amber)'; }
+        else { bellIcon.classList.replace('fa-solid', 'fa-regular'); bellTxt.innerText = 'إشعار'; bellTxt.style.color = 'white'; }
+    }
+
+    function openRating() { document.getElementById('ratingSheet').classList.add('active'); document.getElementById('sheetOverlay').style.display = 'block'; }
+    function submitRating(val, iconClass) {
+        document.getElementById('rateTxt').innerText = val; document.getElementById('rateTxt').style.color = 'var(--amber)';
+        document.getElementById('rateIcon').className = `fa-solid ${iconClass}`; closeMxAlert();
+        const toast = document.getElementById('toast'); toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+    function hideToast() { document.getElementById('toast').classList.remove('show'); }
+
+    loadSlider();
+    fetchSection(idsPlays, 'containerPlays');
     fetchSection(idsRamadan, 'container1');
     fetchSection(idsShami, 'container2');
 </script>
